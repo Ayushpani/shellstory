@@ -1,0 +1,17 @@
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.DS_Store
+shellstory.egg-info/
+dist/
+build/
+test-project/
+.venv/
+venv/
+.env
+.shellstory/
+*.ndjson
+*.state.json
+*.agents.json
+*.runbook.json

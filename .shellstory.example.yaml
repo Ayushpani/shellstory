@@ -1,0 +1,48 @@
+# shellstory — Example Configuration
+#
+# Copy this file to ~/.shellstory/config.yaml and fill in your values.
+# The file will contain your API key — it is created with restricted permissions.
+
+llm:
+  # Provider: "openrouter" or "nvidia"
+  provider: openrouter
+
+  # Your API key (get one at https://openrouter.ai/keys or https://build.nvidia.com)
+  api_key: "YOUR_OPENROUTER_API_KEY"
+
+  # Model string (see provider docs for available models)
+  # OpenRouter examples: anthropic/claude-sonnet-4, meta-llama/llama-3.1-70b-instruct
+  # NVIDIA examples: meta/llama-3.1-70b-instruct, meta/llama-3.1-8b-instruct
+  model: "anthropic/claude-sonnet-4"
+
+  # OpenRouter-specific (optional)
+  site_url: ""
+  app_name: "shellstory"
+
+# Default export target: notion | obsidian | confluence | markdown
+default_connector: markdown
+
+# Where capture NDJSON files are stored
+sessions_dir: "~/.shellstory/sessions"
+
+# Connector-specific settings (configure only the ones you use)
+connectors:
+  notion:
+    token: ""
+    parent_page_id: ""
+
+  obsidian:
+    vault_path: "~/Documents/MyVault"
+    subfolder: "runbooks"
+
+  confluence:
+    base_url: "https://your-company.atlassian.net/wiki"
+    username: ""
+    api_token: ""
+    space_key: ""
+    parent_page_id: null
+
+  markdown:
+    output_dir: "~/runbooks"
+    git_commit: false
+    git_remote: null
