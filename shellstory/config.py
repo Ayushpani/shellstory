@@ -93,16 +93,27 @@ def load_config(config_path: Path | None = None) -> dict[str, Any]:
     path = _resolve_config_path(config_path)
 
     if not path.exists():
-        raise FileNotFoundError(
-            f"Config not found at {path}.\n"
-            f"Run 'shellstory configure' to set up, or copy .shellstory.example.yaml to {path}"
+        # If environment variables can supply the API key, we can work without a config file
+        has_env_key = any(
+            os.environ.get(k) for k in ("OPENROUTER_API_KEY", "NVIDIA_API_KEY")
         )
-
-    with open(path, encoding="utf-8") as f:
-        config = yaml.safe_load(f) or {}
+        if has_env_key:
+            config = {}
+        else:
+            raise FileNotFoundError(
+                f"Config not found at {path}.\n"
+                f"Run 'shellstory configure' to set up, or set OPENROUTER_API_KEY environment variable."
+            )
+    else:
+        with open(path, encoding="utf-8") as f:
+            config = yaml.safe_load(f) or {}
 
     # Merge with defaults so optional fields always exist
     merged = _deep_merge(DEFAULT_CONFIG, config)
+
+    # Environment variable overrides — allows zero-config pip-install workflow
+    _apply_env_overrides(merged)
+
     _validate(merged)
 
     # Resolve paths
@@ -145,6 +156,40 @@ def get_sessions_dir(config: dict[str, Any] | None = None) -> Path:
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 # Internal
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+
+def _apply_env_overrides(config: dict[str, Any]) -> None:
+    """
+    Apply environment variable overrides to the config.
+
+    Supported variables:
+        OPENROUTER_API_KEY  — Sets llm.api_key and llm.provider to openrouter
+        NVIDIA_API_KEY      — Sets llm.api_key and llm.provider to nvidia
+        SHELLSTORY_MODEL    — Override the default model
+        SHELLSTORY_OUTPUT   — Override the markdown output directory
+    """
+    env_keys = {
+        "OPENROUTER_API_KEY": ("openrouter", None),
+        "NVIDIA_API_KEY": ("nvidia", None),
+    }
+
+    for env_var, (provider, _) in env_keys.items():
+        val = os.environ.get(env_var)
+        if val:
+            config.setdefault("llm", {})
+            config["llm"]["api_key"] = val
+            config["llm"]["provider"] = provider
+            break  # First match wins
+
+    model = os.environ.get("SHELLSTORY_MODEL")
+    if model:
+        config.setdefault("llm", {})
+        config["llm"]["model"] = model
+
+    output = os.environ.get("SHELLSTORY_OUTPUT")
+    if output:
+        config.setdefault("connectors", {}).setdefault("markdown", {})
+        config["connectors"]["markdown"]["output_dir"] = output
 
 
 def _resolve_config_path(explicit: Path | None) -> Path:
