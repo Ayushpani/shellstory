@@ -180,22 +180,39 @@ A dedicated PII Scanner Agent reviews the full session transcript for context-de
 ## Installation
 
 **Requirements:** Python 3.11 or higher.
+```bash
+pip install shellstory
+```
+
+For development:
 
 ```bash
 git clone https://github.com/Ayushpani/shellstory.git
 cd shellstory
-pip install -e .
+pip install -e ".[dev]"
 ```
 
 This registers the `shellstory` command globally.
 
 ---
 
-## Usage
+## Quickstart
 
-### 1. Configure
+### Option A: Environment Variable (Recommended)
 
-Run the interactive setup wizard to provide your OpenRouter API key and configure output preferences.
+Set your API key once and start immediately. No config file required.
+
+```bash
+# PowerShell
+$env:OPENROUTER_API_KEY="sk-or-v1-..."
+
+# Bash / Zsh
+export OPENROUTER_API_KEY="sk-or-v1-..."
+```
+
+### Option B: Interactive Configuration
+
+Run the setup wizard to persist settings to `~/.shellstory/config.yaml`.
 
 ```bash
 shellstory configure
