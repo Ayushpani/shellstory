@@ -87,6 +87,15 @@ REDACTION_PATTERNS: list[tuple[str, str, re.Pattern]] = [
     ("NPM_TOKEN", "npm authentication token",
      re.compile(r"npm_[A-Za-z0-9]{36}")),
 
+    # Stripe API keys (test and live)
+    ("STRIPE_KEY", "Stripe API key",
+     re.compile(r"(?:sk|pk|rk)_(?:test|live)_[A-Za-z0-9]{10,}")),
+
+    # Environment variable assignments with sensitive-looking values
+    # Catches: $env:SECRET="value", export SECRET=value, SECRET=value
+    ("ENV_SECRET", "Environment variable with secret",
+     re.compile(r"""(?i)(?:\$env:|export\s+)?(?:secret|token|key|password|passwd|api_key|api_secret|access_key|auth)[_A-Z]*\s*=\s*["']?([^\s"']+)["']?""", re.IGNORECASE)),
+
     # Passwords in common CLI patterns (--password=xxx, -p xxx, etc.)
     ("CLI_PASSWORD", "CLI password argument",
      re.compile(r"(?i)(?:--password|--passwd|-p)\s*[=\s]\s*\S+")),
