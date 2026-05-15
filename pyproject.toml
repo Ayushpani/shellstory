@@ -5,15 +5,19 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "shellstory"
 version = "0.1.0"
-description = "Turn shell sessions into production runbooks — capture, redact, analyse, export."
+description = "Turn shell sessions into production runbooks using a swarm of AI agents."
 readme = "README.md"
 license = {text = "MIT"}
 requires-python = ">=3.11"
 authors = [
-    {name = "ShellStory Contributors"},
+    {name = "Ayush Pani", email = "ayushpani@users.noreply.github.com"},
+]
+keywords = [
+    "shell", "terminal", "runbook", "documentation",
+    "devops", "llm", "ai", "agent", "automation",
 ]
 classifiers = [
-    "Development Status :: 3 - Alpha",
+    "Development Status :: 4 - Beta",
     "Environment :: Console",
     "Intended Audience :: Developers",
     "Intended Audience :: System Administrators",
@@ -43,13 +47,23 @@ dev = [
     "pytest-mock>=3.0",
     "respx>=0.21",
     "ruff>=0.4",
+    "build>=1.0",
+    "twine>=5.0",
 ]
+
+[project.urls]
+Homepage = "https://github.com/Ayushpani/shellstory"
+Repository = "https://github.com/Ayushpani/shellstory"
+Issues = "https://github.com/Ayushpani/shellstory/issues"
 
 [project.scripts]
 shellstory = "shellstory.cli:main"
 
 [tool.setuptools.packages.find]
 include = ["shellstory*"]
+
+[tool.setuptools.package-data]
+shellstory = ["py.typed"]
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
