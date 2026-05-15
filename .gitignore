@@ -1,17 +1,28 @@
 __pycache__/
 *.py[cod]
 *$py.class
+*.egg-info/
 .pytest_cache/
 .DS_Store
-shellstory.egg-info/
 dist/
 build/
-test-project/
 .venv/
 venv/
 .env
+
+# ShellStory runtime data (user-specific, never committed)
 .shellstory/
 *.ndjson
 *.state.json
 *.agents.json
 *.runbook.json
+*.redacted.json
+
+# Test scratch directories
+test-project/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
