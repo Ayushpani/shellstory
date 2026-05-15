@@ -438,6 +438,27 @@ async def _process_async(
             f.write(redaction_result.model_dump_json(indent=2))
         dashboard.update_stage("pii", "completed", f"Scanned {len(events)} events")
 
+    # CRITICAL: Apply redactions to the event stream before passing to agents.
+    # Without this, the raw secrets would leak into the LLM prompts and final output.
+    if redaction_result.events:
+        from shellstory.models import RawEvent
+        events = [
+            RawEvent(
+                sequence=getattr(rev, 'sequence', getattr(rev, 'original_sequence', 0)),
+                event_type=rev.event_type,
+                timestamp=rev.timestamp,
+                command=rev.command,
+                working_dir=rev.working_dir,
+                exit_code=rev.exit_code,
+                duration_ms=rev.duration_ms,
+                stream=rev.stream,
+                text=rev.text,
+                shell=rev.shell,
+                os=rev.os,
+            )
+            for rev in redaction_result.events
+        ]
+
     # ── Stage 3: Agent Swarm ─────────────────────────────────────────────────
     dashboard.update_stage("swarm", "active", "Running...")
     orchestrator = SwarmOrchestrator(config, dashboard=dashboard)
